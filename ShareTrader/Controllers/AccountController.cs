@@ -20,7 +20,7 @@ using ShareTrader.Results;
 
 namespace ShareTrader.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
@@ -66,19 +66,30 @@ namespace ShareTrader.Controllers
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
+
+        //TEST DEBUG
+        [AllowAnonymous]
+        [Route("Test")]
+        public IHttpActionResult GetTest()
+        {
+            string s = "all good";
+            return Ok(s);
+        }
+        
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("UserInfo")]
-        public UserInfoViewModel GetUserInfo()
+        public IHttpActionResult GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
 
-            return new UserInfoViewModel
+            return Ok(new UserInfoViewModel
             {
                 Email = User.Identity.GetUserName(),
                 HasRegistered = externalLogin == null,
-                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
-            };
+                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null,
+                Id = User.Identity.GetUserId()
+            });
         }
 
         // POST api/Account/Logout
@@ -387,6 +398,7 @@ namespace ShareTrader.Controllers
             }
             return Ok();
         }
+
 
         [AllowAnonymous]
         [Route("users/{id:guid}/roles")]

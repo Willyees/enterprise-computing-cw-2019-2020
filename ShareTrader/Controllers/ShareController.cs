@@ -7,14 +7,27 @@ using System.Web.Http;
 
 using ShareTrader.Services;
 using ShareTrader.Models;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ShareTrader.Controllers
 {
     public class ShareController : ApiController
     {
 
-        ShareService _service = new ShareService();
+        ShareService _service;
+        private HttpClient _client; 
 
+        ShareController() : base()
+        {
+            _service = new ShareService();
+            _client = new HttpClient();
+            _client.BaseAddress = new Uri("https://localhost:44309/api/");
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+        }
         // GET api/<controller>
         public IEnumerable<string> Get()
         {
@@ -33,12 +46,42 @@ namespace ShareTrader.Controllers
             _service.Add(entity);
         }
 
+        [Authorize]
         [Route("api/Share/Interested")]
-        public IHttpActionResult PostInterest([FromBody]InterestedShareModel entity)
+        public async Task<IHttpActionResult> PostInterest([FromBody]InterestedShareModel entity)
         {
-            try { 
-                _service.Add(entity);
-                return Ok(entity);
+            try {
+                string user = "";
+
+                if (Request.Headers.Contains("Authorization"))
+                {
+                    string authorization = Request.Headers.Authorization.Parameter;
+                    string scheme = Request.Headers.Authorization.Scheme;
+                    using (var requestMessage =
+                    new HttpRequestMessage(HttpMethod.Get, "Account/UserInfo"))
+                    {
+                        requestMessage.Headers.Authorization =
+                            new AuthenticationHeaderValue(scheme, authorization);
+                        HttpResponseMessage response = await _client.SendAsync(requestMessage);
+                   
+                    //HttpResponseMessage response = await _client.GetAsync("");
+                    
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string user_str = await response.Content.ReadAsStringAsync();
+                            var definition = new { Id = "" };
+                            var deserialized = JsonConvert.DeserializeAnonymousType(user_str, definition);
+                            user = deserialized.Id;
+
+                            entity.UserId = user;
+                            _service.Add(entity);
+                        }
+                    }
+
+                }
+
+                
+                return Ok(user);
             }
             catch(Exception e)
             {
