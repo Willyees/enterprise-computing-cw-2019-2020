@@ -8,32 +8,38 @@ using ShareTrader.Models;
 
 namespace ShareTrader.Repositories
 {
-    public class BrokerRepository : IDisposable
+    public class ShareRepository : IDisposable
     {
-        BrokerContext db = new BrokerContext();
+        ShareContext db = new ShareContext();
 
-        public ICollection<BrokerModel> GetAll()
+        public ICollection<ShareModel> GetAll()
         {
-            return db.Brokers.ToList();
+            return db.Shares.ToList();
         }
 
-        public BrokerModel GetById(int id)
+        public ShareModel GetById(int id)
         {
-            var Broker = db.Brokers.FirstOrDefault(c => c.Id == id);
-            if (Broker == null)
+            var Share = db.Shares.FirstOrDefault(c => c.Id == id);
+            if (Share == null)
             {
                 return null;
             }
-            return Broker;
+            return Share;
         }
 
-        public void Add(BrokerModel entity)
+        public void Add(ShareModel entity)
         {
-            db.Brokers.Add(entity);
+            db.Shares.Add(entity);
             db.SaveChanges();
         }
 
-        public void Update(BrokerModel entity)
+        public void Add(InterestedShareModel entity)
+        {
+            db.Interests.Add(entity);
+            db.SaveChanges();
+        }
+
+        public void Update(ShareModel entity)
         {
             db.Entry(entity).State = EntityState.Modified;
             db.SaveChanges();
@@ -41,10 +47,10 @@ namespace ShareTrader.Repositories
 
         public void Delete(int id)
         {
-            var Broker = db.Brokers.FirstOrDefault(c => c.Id == id);
-            if (Broker != null)
+            var Share = db.Shares.FirstOrDefault(c => c.Id == id);
+            if (Share != null)
             {
-                db.Brokers.Remove(Broker);
+                db.Shares.Remove(Share);
                 db.SaveChanges();
             }
         }

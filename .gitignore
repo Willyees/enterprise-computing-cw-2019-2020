@@ -8,6 +8,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#Manually created
+ShareTrader/Migrations/*
+
 # User-specific files
 *.rsuser
 *.suo
