@@ -27,6 +27,36 @@ namespace ShareTrader.Repositories
             return Broker;
         }
 
+        public ICollection<BrokerModel> GetByName(string firstName, string lastName)
+        {
+            ICollection<BrokerModel> brokers = db.Brokers.Where(c => (c.FirstName == firstName && c.LastName == lastName)).ToList();
+            if (brokers.Count == 0)
+            {
+                return null;
+            }
+            return brokers;
+        }
+
+        internal ICollection<BrokerModel> GetByEmail(string email)
+        {
+            ICollection<BrokerModel> brokers = db.Brokers.Where(c => (c.Email == email)).ToList();
+            if (brokers.Count == 0)
+            {
+                return null;
+            }
+            return brokers;
+        }
+
+        internal ICollection<BrokerModel> GetByExpertise(string expertise)
+        {
+            ICollection<BrokerModel> brokers = db.Brokers.Where(c => (c.Expertise == expertise )).ToList();
+            if (brokers.Count == 0)
+            {
+                return null;
+            }
+            return brokers;
+        }
+
         public void Add(BrokerModel entity)
         {
             db.Brokers.Add(entity);

@@ -27,6 +27,28 @@ namespace ShareTrader.Repositories
             return Share;
         }
 
+        public ICollection<ShareModel> GetByPrice(double price, bool higher)
+        {
+            if (higher)
+            {
+                var sharesHigher = db.Shares.Where(c => (price > c.Price));
+                return sharesHigher.ToList();
+            }
+            var sharesLower = db.Shares.Where(c => (price < c.Price));
+            return sharesLower.ToList();
+        }
+
+        public ICollection<ShareModel> GetByAmount(int amount, bool higher)
+        {
+            if (higher)
+            {
+                var sharesHigher = db.Shares.Where(c => (amount > c.Volume));
+                return sharesHigher.ToList();
+            }
+            var sharesLower = db.Shares.Where(c => (amount < c.Volume));
+            return sharesLower.ToList();
+        }
+
         public void Add(ShareModel entity)
         {
             db.Shares.Add(entity);

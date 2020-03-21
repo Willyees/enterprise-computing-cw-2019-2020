@@ -41,7 +41,13 @@ namespace ShareTrader.Controllers
             return NotFound();
         }
 
-
+        //GET: api/Broker/Info?name=<name>&surname=<surname>
+        //get brokers by names
+        [Route("api/Broker/Info")]
+        public IEnumerable<BrokerModel> GetInfo(BrokerQueryModel entity)
+        {
+            return _service.GetInfo(entity);
+        }
         // POST: api/Broker
         public IHttpActionResult Post([FromBody]BrokerModel broker)
         {
@@ -54,6 +60,12 @@ namespace ShareTrader.Controllers
             {
                 return Content(HttpStatusCode.InternalServerError, "Error Adding Entry. Try again later" + e.Message);
             }
+        }
+
+        [Route("api/Broker/Reccomend")]
+        public IEnumerable<BrokerModel> GetReccomend([FromBody]string Expertise)
+        {
+            return _service.ReccomendBroker(Expertise);
         }
 
         // PUT: api/Broker/5

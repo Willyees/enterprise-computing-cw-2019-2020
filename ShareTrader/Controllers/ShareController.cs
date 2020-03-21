@@ -40,6 +40,14 @@ namespace ShareTrader.Controllers
             return "value";
         }
 
+        [Route("api/Share/Info")]
+        public IEnumerable<ShareModel> GetInfo(ShareQueryModel entity)
+        {
+            var shares = _service.GetInfo(entity);
+            return shares;
+        }
+
+        [Authorize(Roles = "Admin")]
         // POST api/<controller>
         public void Post([FromBody]ShareModel entity)
         {
@@ -92,11 +100,13 @@ namespace ShareTrader.Controllers
         // PUT api/<controller>/5
         public void Put(int id, [FromBody]string value)
         {
+            throw new NotImplementedException();
         }
 
         // DELETE api/<controller>/5
         public void Delete(int id)
         {
+            throw new NotImplementedException();
         }
     }
 }

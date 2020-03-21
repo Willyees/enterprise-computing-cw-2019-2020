@@ -9,6 +9,7 @@ using System.Data.Entity;
 
 namespace ShareTrader.Models
 {
+    //add trading record, quality grade
     public class BrokerModel
     {
 
@@ -46,6 +47,28 @@ namespace ShareTrader.Models
             LastName = lastName;
             Email = email;
             PhoneNumber = phoneNumber;
+            Expertise = expertise;
+        }
+    }
+
+    public class BrokerQueryModel
+    {
+
+
+        public string FirstName { get; set; }
+
+
+        public string LastName { get; set; }
+
+        public string Email { get; set; }
+        public string Expertise { get; set; }
+
+
+        public BrokerQueryModel(string firstName, string lastName, string email, string expertise)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
             Expertise = expertise;
         }
     }

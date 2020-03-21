@@ -47,13 +47,30 @@ namespace ShareTrader.Models
             Type = type;
         }*/
     }
+    public class ShareQueryModel
+    {
+        public double Price { get; set; }
+        public bool PriceHigher { get; set; }
 
+        public int Amount {get; set;}
+        public bool AmountHigher { get; set; }
+        
+        public ShareQueryModel()
+        {
+            PriceHigher = false;
+            AmountHigher = true;
+        }
+    }   
     public class InterestedShareModel
     {
         [Key]
         public int Id { get; set; }
 
         public string UserId { get; set; }
+
+        public int max_price { get; set; }
+
+        public int min_price { get; set; }
 
         [ForeignKey("Share")]
         public int ShareId { get; set; }

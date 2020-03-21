@@ -23,6 +23,30 @@ namespace ShareTrader.Services
             return _repository.GetById(id);
         }
 
+        public ICollection<ShareModel> GetByPrice(double price, bool higher)
+        {
+            return _repository.GetByPrice(price, higher);
+        }
+
+        public ICollection<ShareModel> GetByAmount(int price, bool higher)
+        {
+            return _repository.GetByAmount(price, higher);
+        }
+
+
+        public ICollection<ShareModel> GetInfo(ShareQueryModel entity)
+        {
+            if(Convert.ToBoolean(entity.Price))
+            {
+                return _repository.GetByPrice(entity.Price, entity.PriceHigher);
+            }
+            if(entity.AmountHigher)
+            {
+                return _repository.GetByAmount(entity.Amount, entity.AmountHigher);
+            }
+            return new List<ShareModel>();
+        }
+
         public void Add(ShareModel entity)
         {
             _repository.Add(entity);

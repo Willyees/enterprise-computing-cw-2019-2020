@@ -24,6 +24,29 @@ namespace ShareTrader.Services
             return _repository.GetById(id);
         }
 
+        //based on the type fields prensent in the broker, call the right repository method
+        public ICollection<BrokerModel> GetInfo(BrokerQueryModel entity)
+        {
+            if(entity.FirstName != null && entity.LastName != null)
+            {
+                return _repository.GetByName(entity.FirstName, entity.LastName);
+            }
+            else if(entity.Email != null)
+            {
+                return _repository.GetByEmail(entity.Email);
+            }
+            else if(entity.Expertise != null)
+            {
+                return _repository.GetByExpertise(entity.Expertise);
+            }
+
+            return new List<BrokerModel>();
+        }
+        public ICollection<BrokerModel> GetByName(string firstName, string lastName)
+        {
+            return _repository.GetByName(firstName, lastName);
+        }
+
         public void Add(BrokerModel entity)
         {
             _repository.Add(entity);
@@ -34,9 +57,10 @@ namespace ShareTrader.Services
             _repository.Update(entity);
         }
 
-        public BrokerModel ReccomendBroker(string Expertise)
+        //modify to take into account more factors
+        public ICollection<BrokerModel> ReccomendBroker(string Expertise)
         {
-            throw new NotImplementedException();
+            return _repository.GetByExpertise(Expertise);
         }
 
         public void Delete(int id)
