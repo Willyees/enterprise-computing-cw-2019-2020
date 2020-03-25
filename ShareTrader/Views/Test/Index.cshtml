@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>First Name: </td>
+            <td>
+                <input type="text" id="txtFirstName" />
+            </td>
+        </tr>
+        <tr>
+            <td>Last Name: </td>
+            <td>
+                <input type="text" id="txtLastName" />
+            </td>
+        </tr>
+        <tr>
+            <td>Age: </td>
+            <td>
+                <input type="text" id="txtAge" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" id="btnSave" value="Save Data" />
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
+
+<script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+
+    $("#btnSave").click(function ()
+    {
+        var url = "http://localhost:24010/DataFeed/PostUserdata";
+
+        var userData =
+        {
+            FirstName: $("#txtFirstName").val(),
+            LastName: $("#txtLastName").val(),
+            Age: $("#txtAge").val()
+        };
+
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: url,
+            data: JSON.stringify(userData),
+            contentType: "application/json",
+            async: true,
+            success: function (response)
+            {
+                alert('Data Saved successfully...!!!');
+            },
+            error: function (err)
+            {
+                alert('Call failed');
+            }
+        });
+    })
+</script>
+<script>
+    var connection = $.connection.NotificationHub;
+    $.connection.hub.start().done(init);
+    alert(connection.server.Test());
+</script>

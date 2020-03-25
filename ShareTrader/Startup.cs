@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Owin;
 using Owin;
 
+
 [assembly: OwinStartup(typeof(ShareTrader.Startup))]
 
 namespace ShareTrader
@@ -13,6 +14,9 @@ namespace ShareTrader
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
+
         }
+
     }
 }
