@@ -52,10 +52,6 @@ namespace ShareTrader.Services
             _repository.Add(entity);
         }
 
-        public void Add(InterestedShareModel entity)
-        {
-            _repository.Add(entity);
-        }
 
         public void Update(ShareModel entity)
         {

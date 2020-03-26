@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="/Scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.validate.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+    <title>ASP.NET SignalR Stock Ticker</title>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-4">
+            <section>
+                <form id="account" method="post">
+                    <h4>Use a local account to log in.</h4>
+                    <hr />
+                    <div class="text-danger"></div>
+                    <div class="form-group">
+                        <label for="Email"></label>
+                        <input for="Email" type="email" class="form-control" minlength="2" data-msg-required="Name is required." data-rule-required="true"/>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Password"></label>
+                        <input for="Password" class="form-control" type="password"/>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </div>
+                    <div class="form-group">
+                        <p>
+                            <a id="forgot-password" href="./ForgotPassword">Forgot your password?</a>
+                        </p>
+                        <p>
+                            <a href="./Register">Register as a new user</a>
+                        </p>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div>
+</body>
+
+<script >
+    var uri = "https://localhost:44309/"
+    $('#btnRegister').click(function () {
+            var loginData = {
+    grant_type: 'password',
+    username: self.loginEmail(),
+    password: self.loginPassword()
+};
+
+            $.ajax({
+                type: 'POST',
+                url: '/Token',
+                data: loginData
+            }).done(function (data) {
+                self.user(data.userName);
+                // Cache the access token in session storage.
+                sessionStorage.setItem(tokenKey, data.access_token);
+            }).fail(showError);
+                success: function(data) {
+                    $('#successModal').modal('show');
+                },
+                error: function(jqXHR) {
+                    $('#divErrorText').text(jqXHR.responseText);
+                    $('#divError').show('fade');
+                }
+            });
+        });
+</script>
+</html>

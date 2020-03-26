@@ -54,48 +54,7 @@ namespace ShareTrader.Controllers
             _service.Add(entity);
         }
 
-        [Authorize]
-        [Route("api/Share/Interested")]
-        public async Task<IHttpActionResult> PostInterest([FromBody]InterestedShareModel entity)
-        {
-            try {
-                string user = "";
-
-                if (Request.Headers.Contains("Authorization"))
-                {
-                    string authorization = Request.Headers.Authorization.Parameter;
-                    string scheme = Request.Headers.Authorization.Scheme;
-                    using (var requestMessage =
-                    new HttpRequestMessage(HttpMethod.Get, "Account/UserInfo"))
-                    {
-                        requestMessage.Headers.Authorization =
-                            new AuthenticationHeaderValue(scheme, authorization);
-                        HttpResponseMessage response = await _client.SendAsync(requestMessage);
-                   
-                    //HttpResponseMessage response = await _client.GetAsync("");
-                    
-                        if (response.IsSuccessStatusCode)
-                        {
-                            string user_str = await response.Content.ReadAsStringAsync();
-                            var definition = new { Id = "" };
-                            var deserialized = JsonConvert.DeserializeAnonymousType(user_str, definition);
-                            user = deserialized.Id;
-
-                            entity.UserId = user;
-                            _service.Add(entity);
-                        }
-                    }
-
-                }
-
-                
-                return Ok(user);
-            }
-            catch(Exception e)
-            {
-                return Content(HttpStatusCode.InternalServerError, "error: " + e.Message);
-            }
-        }
+       
 
         // PUT api/<controller>/5
         public void Put(int id, [FromBody]string value)

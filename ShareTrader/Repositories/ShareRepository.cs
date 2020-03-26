@@ -55,11 +55,6 @@ namespace ShareTrader.Repositories
             db.SaveChanges();
         }
 
-        public void Add(InterestedShareModel entity)
-        {
-            db.Interests.Add(entity);
-            db.SaveChanges();
-        }
 
         public void Update(ShareModel entity)
         {

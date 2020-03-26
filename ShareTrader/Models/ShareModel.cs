@@ -61,28 +61,10 @@ namespace ShareTrader.Models
             AmountHigher = true;
         }
     }   
-    public class InterestedShareModel
-    {
-        [Key]
-        public int Id { get; set; }
-
-        public string UserId { get; set; }
-
-        public int max_price { get; set; }
-
-        public int min_price { get; set; }
-
-        [ForeignKey("Share")]
-        public int ShareId { get; set; }
-        public ShareModel Share { get; set; }
-
-    }
-
 
     public class ShareContext : DbContext
     {
         public DbSet<ShareModel> Shares {get;set;}
-        public DbSet<InterestedShareModel> Interests { get; set; }
 
         public ShareContext() : base("name=DefaultConnection")
         {
