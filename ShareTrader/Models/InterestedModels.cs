@@ -16,15 +16,23 @@ namespace ShareTrader.Models
 
         public string UserId { get; set; }
 
-        public int max_price { get; set; }
+        public double Max_price { get; set; }
 
-        public int min_price { get; set; }
+        public double Min_price { get; set; }
 
         //cant use foreign key because these two tables should be located in different DBs
         //[ForeignKey("Share")]
         public int ShareId { get; set; }
         //public ShareModel Share { get; set; }
 
+    }
+
+    public class InterestedShareQuery
+    {
+        public int ShareId { get; set; }
+        public double Max_price { get; set; }
+
+        public double Min_price { get; set; }
     }
 
     public class InterestedContext : DbContext

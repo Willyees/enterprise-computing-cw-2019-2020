@@ -612,6 +612,7 @@
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Services\BrokerService.cs" />
     <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\IWatcher.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\ShareService.cs" />
     <Compile Include="SignalR.Sample\Startup.cs" />

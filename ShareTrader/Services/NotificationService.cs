@@ -50,7 +50,21 @@ namespace ShareTrader.Services
         public void NotifyShareChanges(int shareId)
         {
             
+            //debug
+            InterestedShareQuery q = new InterestedShareQuery();
+            q.Max_price = 50.0;
+            q.Min_price = 10.0;
+            q.ShareId = 0;
+
+
+            ICollection<InterestedShareModel> usersToNotify = _repository.GetInfoInterestedShare(q);
+            foreach(InterestedShareModel shareModel in usersToNotify)
+            {
+                Clients.User(shareModel.UserId).receiveStockMessage("the share you are interested " + shareModel.ShareId + " has moved price");
+            }
         }
+
+
 
         public ICollection<InterestedShareModel> GetAll()
         {
