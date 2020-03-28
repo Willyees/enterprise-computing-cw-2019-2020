@@ -29,9 +29,9 @@ namespace ShareTrader.Controllers
                 new MediaTypeWithQualityHeaderValue("application/json"));
         }
         // GET api/<controller>
-        public IEnumerable<string> Get()
+        public IEnumerable<ShareOutViewModel> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _service.GetAll();
         }
 
         // GET api/<controller>/5
@@ -67,5 +67,6 @@ namespace ShareTrader.Controllers
         {
             throw new NotImplementedException();
         }
+
     }
 }

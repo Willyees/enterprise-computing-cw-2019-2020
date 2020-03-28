@@ -8,7 +8,7 @@ using ShareTrader.Repositories;
 
 namespace ShareTrader.Services
 {
-    public class BrokerService : IService<BrokerModel>
+    public class BrokerService
     {
 
         private BrokerRepository _repository = new BrokerRepository();

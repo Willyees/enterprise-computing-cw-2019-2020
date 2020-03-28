@@ -16,9 +16,9 @@ namespace ShareTrader.Models
 
         public string UserId { get; set; }
 
-        public double Max_price { get; set; }
+        public double MaxPrice { get; set; }
 
-        public double Min_price { get; set; }
+        public double MinPrice { get; set; }
 
         //cant use foreign key because these two tables should be located in different DBs
         //[ForeignKey("Share")]
@@ -30,9 +30,7 @@ namespace ShareTrader.Models
     public class InterestedShareQuery
     {
         public int ShareId { get; set; }
-        public double Max_price { get; set; }
-
-        public double Min_price { get; set; }
+        public double ActualPrice { get; set; }
     }
 
     public class InterestedContext : DbContext
@@ -46,6 +44,7 @@ namespace ShareTrader.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            //Database.SetInitializer<InterestedContext>(null);
             base.OnModelCreating(modelBuilder);
         }
     }

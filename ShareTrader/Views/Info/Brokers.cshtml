@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Complete brokers view</title>
+</head>
+<body>
+    <h1>The complete list of the available brokers</h1>
+
+    <div id="brokerTable">
+        <table class="table" border="1">
+            <thead style="background-color:silver">
+                <tr><th scope="col">First Name</th><th scope="col">Surname</th><th scope="col">Email</th><th scope="col">Phone Number</th><th scope="col">Expertise</th></tr>
+            </thead>
+            <tbody>
+                <tr class="loading"><td colspan="3">loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    @section scripts{
+        <script src="/Scripts/jquery.signalR-2.4.1.js"></script>
+
+        <script src="/signalr/hubs"></script>
+        <script src="~/Scripts/jquery.color-2.1.2.js"></script>
+
+        <script>
+            // Crockford's supplant method
+if (!String.prototype.supplant) {
+    String.prototype.supplant = function (o) {
+        return this.replace(/{([^{}]*)}/g,
+            function (a, b) {
+                var r = o[b];
+                return typeof r === 'string' || typeof r === 'number' ? r : a;
+            }
+        );
+    };
+}
+
+$(function () {
+    var uri = "https://localhost:44309/api/"
+    var proxy = $.connection.notificationHub; // the generated client-side hub proxy
+    var $brokerTable = $('#brokerTable');
+    var $brokerTableBody = $brokerTable.find('tbody');
+    var rowTemplate = '<tr data-symbol="{FirstName}"><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{Expertise}</td></tr>';
+
+
+
+    function init() {
+        //set all the current stocks
+        console.log("init");
+        $.ajax({
+            type: 'GET',
+            url: uri + 'Broker',
+            success: function (brokers) {
+                $brokerTableBody.empty();
+                $.each(brokers, function () {
+                    $brokerTableBody.append(rowTemplate.supplant(this));
+                })
+            },
+            error: function () { console.log("problem in retreiving the shares");}
+        });
+
+
+    }
+
+
+    // Add client-side hub methods that the server will call
+    $.extend(proxy.client, {
+        updateBrokers: function (broker) {
+            $row = $(rowTemplate.supplant(broker)),
+            $brokerTableBody.find('tr[data-symbol=' + broker.Symbol + ']').replaceWith($row);
+        }
+    });
+
+    // Start the connection
+    $.connection.hub.start().then(init);
+});
+        </script>
+    }
+</body>
+</html>

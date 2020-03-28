@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Complete shares view</title>
+</head>
+<body>
+    <h1>The complete list of the available shares</h1>
+
+    <div id="stockTable">
+        <table class="table" border="1">
+            <thead style="background-color:silver">
+                <tr><th scope="col">Name</th><th scope="col">Price</th><th scope="col">Volume</th><th scope="col">High</th><th scope="col">Low</th><th scope="col">Currency</th><th scope="col">Type</th></tr>
+            </thead>
+            <tbody>
+                <tr class="loading"><td colspan="3">loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    @section scripts{
+        <script src="/Scripts/jquery.signalR-2.4.1.js"></script>
+
+        <script src="/signalr/hubs"></script>
+        <script src="~/Scripts/jquery.color-2.1.2.js"></script>
+
+        <script>
+            // Crockford's supplant method
+if (!String.prototype.supplant) {
+    String.prototype.supplant = function (o) {
+        return this.replace(/{([^{}]*)}/g,
+            function (a, b) {
+                var r = o[b];
+                return typeof r === 'string' || typeof r === 'number' ? r : a;
+            }
+        );
+    };
+}
+
+jQuery.fn.flash = function(n, t) {
+    var i = this.css("backgroundColor");
+    this.animate({
+        backgroundColor: "rgb(" + n + ")"
+    }, t / 2).animate({
+        backgroundColor: i
+    }, t / 2)
+};
+
+$(function () {
+    var uri = "https://localhost:44309/api/"
+    var proxy = $.connection.notificationHub; // the generated client-side hub proxy
+    var $stockTable = $('#stockTable');
+    var $stockTableBody = $stockTable.find('tbody');
+    var rowTemplate = '<tr data-symbol="{Symbol}"><td>{Name}</td><td>{Price}</td><td>{Volume}</td><td>{High}</td><td>{Low}</td><td>{Currency}</td><td>{Type}</td></tr>';
+
+    function formatStock(stock) {
+        return $.extend(stock, {
+            Price: stock.Price.toFixed(2)
+        });
+    }
+
+    function init() {
+        //set all the current stocks
+        console.log("init");
+        $.ajax({
+            type: 'GET',
+            url: uri + 'Share',
+            success: function (stocks) {
+                $stockTableBody.empty();
+                $.each(stocks, function () {
+                    var stock = formatStock(this);
+                    $stockTableBody.append(rowTemplate.supplant(stock));
+                })
+            },
+            error: function () { console.log("problem in retreiving the shares");}
+        });
+
+
+    }
+
+
+    // Add client-side hub methods that the server will call
+    $.extend(proxy.client, {
+        updateStockPrice: function (stock) {
+            console.log("update stockprice");
+            var displayStock = formatStock(stock);
+            $row = $(rowTemplate.supplant(displayStock)),
+            $stockTableBody.find('tr[data-symbol=' + stock.Symbol + ']').replaceWith($row);
+            $row.flash("255,255,0", 3e3);
+        }
+    });
+
+    // Start the connection
+    $.connection.hub.start().then(init);
+});
+        </script>
+    }
+</body>
+</html>

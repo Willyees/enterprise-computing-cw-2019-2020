@@ -47,23 +47,33 @@ namespace ShareTrader.Services
 
         //outside methods towards clients
         //passing the shareid that was modified. Check which user is interested and notify it
-        public void NotifyShareChanges(int shareId)
+        public void NotifyShareChanges(ShareModel shareModified)
         {
-            
+
             //debug
-            InterestedShareQuery q = new InterestedShareQuery();
-            q.Max_price = 50.0;
-            q.Min_price = 10.0;
-            q.ShareId = 0;
+            InterestedShareQuery shareQuery = new InterestedShareQuery
+            {
+                ShareId = shareModified.Id,
+                ActualPrice = shareModified.Price
+            };
 
+            ShareOutViewModel outViewShare = new ShareOutViewModel(shareModified);
 
-            ICollection<InterestedShareModel> usersToNotify = _repository.GetInfoInterestedShare(q);
+            ICollection<InterestedShareModel> usersToNotify = _repository.GetInfoInterestedShare(shareQuery);
             foreach(InterestedShareModel shareModel in usersToNotify)
             {
+                
+                
                 Clients.User(shareModel.UserId).receiveStockMessage("the share you are interested " + shareModel.ShareId + " has moved price");
             }
+            //try to update the table to all the users in real time
+            Clients.All.updateStockPrice(outViewShare);
         }
 
+        public void NotifyAnnouncements()
+        {
+            throw new NotImplementedException();
+        }
 
 
         public ICollection<InterestedShareModel> GetAll()
@@ -80,5 +90,7 @@ namespace ShareTrader.Services
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

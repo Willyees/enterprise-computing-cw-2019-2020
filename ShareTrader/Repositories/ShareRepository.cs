@@ -12,9 +12,11 @@ namespace ShareTrader.Repositories
     {
         ShareContext db = new ShareContext();
 
-        public ICollection<ShareModel> GetAll()
+        public ICollection<ShareOutViewModel> GetAll()
         {
-            return db.Shares.ToList();
+            return db.Shares.Select(e => new ShareOutViewModel { 
+            Symbol = e.Symbol, Name = e.Name , Price = e.Price, Volume = e.Volume, High = e.High, Low = e.Low, Currency = e.Currency, Type = e.Type
+            }).ToList();
         }
 
         public ShareModel GetById(int id)

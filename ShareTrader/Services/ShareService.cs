@@ -4,21 +4,26 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Web;
-
+using Newtonsoft.Json;
 using ShareTrader.Models;
 using ShareTrader.Repositories;
+using TableDependency.SqlClient;
+using TableDependency.SqlClient.Base.EventArgs;
 
 namespace ShareTrader.Services
 {
-    public class ShareService : IService<ShareModel>
+    public class ShareService
     {
         private WatcherShare watcher = new WatcherShare(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=aspnet-ShareTrader-20200316103418;",
-            @"SELECT Id, Name, Price, Volume, High, Low, Currency, Type FROM dbo.ShareModels");
+            "https://localhost:44309/api/");
         private ShareRepository _repository = new ShareRepository();
 
 
-        public ICollection<ShareModel> GetAll()
+        public ICollection<ShareOutViewModel> GetAll()
         {
             return _repository.GetAll();
         }
@@ -69,80 +74,82 @@ namespace ShareTrader.Services
         }
     }
 
-    public class WatcherShare
+    public class WatcherShare : IDisposable
     {
+        private string _connString;
+        private SqlTableDependency<ShareModel> _dependency;
+        private HttpClient _client;
 
-        readonly string _connString;
-        readonly SqlCommand _command;
-        private SqlConnection _connection;
-        private SqlDependency _dependency;
-        //public event ResultChangedEventHandler NewMessage;
 
-        public WatcherShare(string connectionString, string commandDb)
+        public WatcherShare(string connectionString, string baseAddressNotificationService)
         {
             System.Diagnostics.Debug.WriteLine("intit watcher");
             //var commandDb = @"SELECT [MessageID], [Message], [EmptyMessage], [Date] FROM [dbo].[Messages]";
-            _connString = connectionString;// ConfigurationManager.ConnectionStrings[connectionString].ConnectionString;
-            _connection = new SqlConnection(_connString);
-            _command = new SqlCommand(commandDb, _connection);
-
-
-            /*ICollection<ShareModel> shares = reader.Cast<IDataRecord>()
-                .Select(x => new ShareModel()
-                {
-                    Id = x.GetInt32(0),
-                    Name = x.GetString(1),
-                    Price = x.GetDouble(2),
-                    Volume = x.GetInt32(2),
-                    High = x.GetDouble(2),
-                    Low = x.GetDouble(2),
-                    Currency = x.GetString(2),
-                    Type = x.GetString(2),
-                }).ToList();*/
-
-
-            RegisterForNotification();
+            // ConfigurationManager.ConnectionStrings[connectionString].ConnectionString;
+            RegisterForNotification(connectionString);
+            _client = new HttpClient();
+            _client.BaseAddress = new Uri(baseAddressNotificationService);
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
 
         }
 
-        private void RegisterForNotification()
+
+        public void RegisterForNotification(string connectionString)
         {
-            _connection.Open();
-            _command.Notification = null;
-            _dependency = new SqlDependency(_command);
-            _dependency.OnChange += new OnChangeEventHandler(dependency_OnChange);
-            using (var reader = _command.ExecuteReader())
-            {
-
-            }
-            _connection.Close();
+            _connString = connectionString;
+            _dependency = new SqlTableDependency<ShareModel>(_connString, "ShareModels");
+            _dependency.OnChanged += dependency_OnChange;
+            _dependency.OnError += dependency_OnError;
+            _dependency.Start();
         }
 
-        private void dependency_OnChange(object sender, SqlNotificationEventArgs e)
+
+        private void dependency_OnChange(object sender, RecordChangedEventArgs<ShareModel> e)
         {
             //get new data
             System.Diagnostics.Debug.WriteLine("share changed");
-            if (e.Type == SqlNotificationType.Change)
+            var changedEntity = e.Entity;
+            string json = JsonConvert.SerializeObject(changedEntity);
+            System.Diagnostics.Debug.WriteLine(changedEntity.Symbol);
+            sendRequest(json);
+            //dont have to reregister
+            //RegisterForNotification();
+            //call the stored service to inform of changed share
+            
+        }
+
+        private void dependency_OnError(object sender, ErrorEventArgs e)
+        {
+            throw e.Error;
+        }
+
+        private async void sendRequest(string json)
+        {
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, "Interest/ShareNotification"))
             {
-                /*if (_connection.State == ConnectionState.Closed)
-                    _connection.Open();
-                using (var reader = _command.ExecuteReader()) { 
-                    ICollection<ShareModel> shares = reader.Cast<IDataRecord>()
-                        .Select(x => new ShareModel()
-                        {
-                            Id = x.GetInt32(0),
-                            Name = x.GetString(1),
-                            Price = x.GetDouble(2),
-                            Volume = x.GetInt32(2),
-                            High = x.GetDouble(2),
-                            Low = x.GetDouble(2),
-                            Currency = x.GetString(2),
-                            Type = x.GetString(2),
-                        }).ToList();
-                }*/
-                RegisterForNotification();
-                System.Diagnostics.Debug.WriteLine("share changed");
+                //requestMessage.Headers.Authorization = new AuthenticationHeaderValue(scheme, authorization);
+                var content = new System.Net.Http.StringContent(json, Encoding.UTF8, "application/json");
+                requestMessage.Content = content;
+                var reponse = await _client.SendAsync(requestMessage);
             }
         }
+
+        protected void Dispose(bool dispose)
+        {
+            if (dispose)
+            {
+                _dependency.Stop();
+                _dependency.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
+
 }

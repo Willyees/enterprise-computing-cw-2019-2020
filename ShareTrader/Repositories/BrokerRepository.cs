@@ -14,6 +14,14 @@ namespace ShareTrader.Repositories
 
         public ICollection<BrokerModel> GetAll()
         {
+            /*return db.Brokers.Select(e => new BrokerOutViewModel
+            {
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Email = e.Email,
+                PhoneNumber = e.PhoneNumber,
+                Expertise = e.Expertise
+            }).ToList();*/
             return db.Brokers.ToList();
         }
 

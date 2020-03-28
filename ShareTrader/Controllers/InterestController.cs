@@ -20,6 +20,7 @@ namespace ShareTrader.Controllers
 
         InterestController() : base()
         {
+            System.Diagnostics.Debug.WriteLine("init Interest Controller");
             _service = NotificationService.Instance;
             _client = new HttpClient();
             _client.BaseAddress = new Uri("https://localhost:44309/api/");
@@ -73,6 +74,16 @@ namespace ShareTrader.Controllers
                 return Content(HttpStatusCode.InternalServerError, "error: " + e.Message);
             }
         }
+
+        //POST api/Interested/ShareNotification
+        //used to receive the modified share and successively contact the interested clients
+        [Route("api/Interest/ShareNotification")]
+        //these should be protected with some kind of token since are inter services communications. No user should be able to query them
+        public void PostShareNotification([FromBody] ShareModel shareModified)
+        {
+            _service.NotifyShareChanges(shareModified);
+        }
+
 
         // GET: api/Interest
         public IEnumerable<string> Get()
