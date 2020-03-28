@@ -12,6 +12,6 @@ namespace ShareTrader.Repositories
         T GetById(int id);
         void Add(T entity);
         void Update(T entity);
-        int SaveChanges();
+        void SaveChanges();
     }
 }

@@ -40,6 +40,12 @@ namespace ShareTrader.Controllers
             return "value";
         }
 
+        //todo: dont think it will work
+        public string Get(string symbol)
+        {
+            return "asd";
+        }
+
         [Route("api/Share/Info")]
         public IEnumerable<ShareModel> GetInfo(ShareQueryModel entity)
         {

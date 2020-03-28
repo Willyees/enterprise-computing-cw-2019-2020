@@ -8,7 +8,7 @@ using ShareTrader.Models;
 
 namespace ShareTrader.Repositories
 {
-    public class BrokerRepository : IDisposable
+    public class BrokerRepository : IDisposable, IRepostiory<BrokerModel>
     {
         BrokerContext db = new BrokerContext();
 
@@ -68,13 +68,13 @@ namespace ShareTrader.Repositories
         public void Add(BrokerModel entity)
         {
             db.Brokers.Add(entity);
-            db.SaveChanges();
+            SaveChanges();
         }
 
         public void Update(BrokerModel entity)
         {
             db.Entry(entity).State = EntityState.Modified;
-            db.SaveChanges();
+            SaveChanges();
         }
 
         public void Delete(int id)
@@ -83,7 +83,7 @@ namespace ShareTrader.Repositories
             if (Broker != null)
             {
                 db.Brokers.Remove(Broker);
-                db.SaveChanges();
+                SaveChanges();
             }
         }
 
@@ -103,6 +103,11 @@ namespace ShareTrader.Repositories
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void SaveChanges()
+        {
+            db.SaveChanges();
         }
     }
 }

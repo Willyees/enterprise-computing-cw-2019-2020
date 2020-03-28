@@ -10,7 +10,8 @@ namespace ShareTrader.Services
 {
     public class BrokerService
     {
-
+        private Watcher<BrokerModel> watcher = new Watcher<BrokerModel>(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=aspnet-ShareTrader-20200316103418;",
+           "https://localhost:44309/api/Interest/BrokerNotification", "BrokerModels");
         private BrokerRepository _repository = new BrokerRepository();
 
 

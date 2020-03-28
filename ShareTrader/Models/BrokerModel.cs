@@ -35,12 +35,14 @@ namespace ShareTrader.Models
         [MaxLength(256)]
         public string Expertise { get; set; }
 
-        public BrokerModel() : this(0, "","","","", "")
+        public double QualityGrade { get; set; }
+
+        public BrokerModel() : this(0, "","","","", "", 0.0)
         {
 
         }
 
-        public BrokerModel(int id, string firstName, string lastName, string email, string phoneNumber, string expertise)
+        public BrokerModel(int id, string firstName, string lastName, string email, string phoneNumber, string expertise, double qualityGrade)
         {
             Id = id;
             FirstName = firstName;
@@ -48,30 +50,11 @@ namespace ShareTrader.Models
             Email = email;
             PhoneNumber = phoneNumber;
             Expertise = expertise;
+            QualityGrade = qualityGrade;
         }
     }
 
-    public class BrokerQueryModel
-    {
-
-
-        public string FirstName { get; set; }
-
-
-        public string LastName { get; set; }
-
-        public string Email { get; set; }
-        public string Expertise { get; set; }
-
-
-        public BrokerQueryModel(string firstName, string lastName, string email, string expertise)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-            Expertise = expertise;
-        }
-    }
+    
 
 
     public class BrokerContext : DbContext
@@ -80,6 +63,12 @@ namespace ShareTrader.Models
 
         public BrokerContext() : base("name=DefaultConnection")
         {
+            this.Configuration.LazyLoadingEnabled = false;
+        }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //Database.SetInitializer<InterestedContext>(null);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

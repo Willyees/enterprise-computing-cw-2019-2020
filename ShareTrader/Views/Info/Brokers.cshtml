@@ -36,12 +36,21 @@ if (!String.prototype.supplant) {
     };
 }
 
+jQuery.fn.flash = function(n, t) {
+    var i = this.css("backgroundColor");
+    this.animate({
+        backgroundColor: "rgb(" + n + ")"
+    }, t / 2).animate({
+        backgroundColor: i
+    }, t / 2)
+};
+
 $(function () {
     var uri = "https://localhost:44309/api/"
     var proxy = $.connection.notificationHub; // the generated client-side hub proxy
     var $brokerTable = $('#brokerTable');
     var $brokerTableBody = $brokerTable.find('tbody');
-    var rowTemplate = '<tr data-symbol="{FirstName}"><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{Expertise}</td></tr>';
+    var rowTemplate = '<tr data-symbol="{Id}"><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{Expertise}</td></tr>';
 
 
 
@@ -68,7 +77,8 @@ $(function () {
     $.extend(proxy.client, {
         updateBrokers: function (broker) {
             $row = $(rowTemplate.supplant(broker)),
-            $brokerTableBody.find('tr[data-symbol=' + broker.Symbol + ']').replaceWith($row);
+            $brokerTableBody.find('tr[data-symbol=' + broker.Id + ']').replaceWith($row);
+            $row.flash("255,255,0", 3e3);
         }
     });
 

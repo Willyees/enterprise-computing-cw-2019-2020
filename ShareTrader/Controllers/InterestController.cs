@@ -84,6 +84,12 @@ namespace ShareTrader.Controllers
             _service.NotifyShareChanges(shareModified);
         }
 
+        [Route("api/Interest/BrokerNotification")]
+        public void PostBrokerNotification([FromBody] BrokerModel brokerModified)
+        {
+            _service.UpdateBrokers(brokerModified);
+        }
+
 
         // GET: api/Interest
         public IEnumerable<string> Get()

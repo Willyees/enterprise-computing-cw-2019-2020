@@ -11,6 +11,10 @@
 #Manually created
 ShareTrader/Migrations/*
 ShareTrader/SignalR.Sample/*
+#all the jquery and other libraries
+ShareTrader/Scripts/jquery*
+ShareTrader/Scripts/knockout*
+
 
 # User-specific files
 *.rsuser
