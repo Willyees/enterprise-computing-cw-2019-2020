@@ -31,6 +31,15 @@ namespace ShareTrader.Services
             return _repository.GetById(id);
         }
 
+        public ICollection<ShareModel> GetById(ICollection<int> shareids)
+        {
+            return _repository.GetById(shareids);
+        }
+        public int GetIdBySymbol(string symbol)
+        {
+            return _repository.GetIdBySymbol(symbol);
+        }
+
         public ICollection<ShareModel> GetByPrice(double price, bool higher)
         {
             return _repository.GetByPrice(price, higher);

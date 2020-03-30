@@ -24,7 +24,24 @@ namespace ShareTrader.Models
         //[ForeignKey("Share")]
         public int ShareId { get; set; }
         //public ShareModel Share { get; set; }
+        public InterestedShareModel()
+        {
 
+        }
+
+        public InterestedShareModel(InterestedShareInModel inmodel)
+        {
+            MaxPrice = inmodel.MaxPrice;
+            MinPrice = inmodel.MinPrice;
+        }
+    }
+
+    public class InterestedShareInModel
+    {
+        public double MaxPrice { get; set; }
+
+        public double MinPrice { get; set; }
+        public string ShareSymbol { get; set; }
     }
 
     public class InterestedShareQuery

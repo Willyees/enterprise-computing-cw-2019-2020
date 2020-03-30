@@ -41,5 +41,6 @@ namespace ShareTrader.Services
         {
             return _repository.Delete(id);
         }
+
     }
 }

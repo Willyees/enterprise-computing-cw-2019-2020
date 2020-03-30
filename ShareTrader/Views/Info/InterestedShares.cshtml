@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddShares</title>
+</head>
+<body>
+    <button id="b" onclick=test()>B</button>
+    <h1>The complete list of your interested shares</h1>
+
+    <div id="stockTable">
+        <table class="table table-bordered">
+            <thead style="background-color:silver">
+                <tr><th scope="col">Symbol</th><th scope="col">Name</th><th scope="col">Price</th><th scope="col">Volume</th><th scope="col">High</th><th scope="col">Low</th><th scope="col">Currency</th><th scope="col">Type</th><th scope="col">Remove</th></tr>
+            </thead>
+            <tbody>
+                <tr class="loading"><td colspan="8">loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+
+@section scripts{
+    
+<script>
+    // Crockford's supplant method
+            if (!String.prototype.supplant) {
+                String.prototype.supplant = function (o) {
+                    return this.replace(/{([^{}]*)}/g,
+                        function (a, b) {
+                            var r = o[b];
+                            return typeof r === 'string' || typeof r === 'number' ? r : a;
+                        }
+                    );
+                };
+    }
+    var headers = {};
+    var uri = "https://localhost:44309/api/"
+    $(function () {
+        
+        //var proxy = $.connection.notificationHub; // the generated client-side hub proxy
+        var $stockTable = $('#stockTable');
+        var $stockTableBody = $stockTable.find('tbody');
+        var rowTemplate = '<tr data-symbol="{Id}"><td>{Symbol}</td><td>{Name}</td><td>{Price}</td><td>{Volume}</td><td>{High}</td><td>{Low}</td><td>{Currency}</td><td>{Type}</td><td>{Button}</td></tr>';
+        var btnTemplate = '<button type="button" class="btn btn-danger" onclick="removeInterest({Id})" id="btn_{Id}"><span class="glyphicon glyphicon-remove"></span></button>';
+        
+        function formatStock(stock) {
+            return $.extend(stock, {
+                Price: stock.Price.toFixed(2)
+            });
+        }
+
+        init();
+
+        function init() {
+            //have to pass the authorization
+            var token = sessionStorage.getItem("accessToken");
+            
+            if (token) {
+                headers.Authorization = 'Bearer ' + token;
+            }
+            //document.getElementById('b').onclick = test;
+            setTable(headers);
+            
+        }
+
+        function setTable() {
+            $.ajax({
+                type: 'GET',
+                headers: headers,
+                url: uri + 'Interest/Shares',
+                success: function (stocks) {
+                    console.log("success intit interested shares");
+                    $stockTableBody.empty();
+                    $.each(stocks, function () {
+                        var stock = formatStock(this);
+                        var row = rowTemplate.supplant(stock);
+                        var btnsupplanted = { Button: btnTemplate.supplant(stock) };
+                        var rowbtn = row.supplant(btnsupplanted)
+                        $stockTableBody.append(rowbtn);
+                        //document.getElementById('btn_' + stock.Id).onclick = function a(2) { test(id) };
+
+                    })
+                },
+                error: function () { console.log("problem in retreiving the shares"); }
+            });
+        }
+
+        
+        function test(i) {
+            console.log(i);
+        }
+    })
+    function removeInterest(id) {
+            $.ajax({
+                type: 'DELETE',
+                headers: headers,
+                url: uri + 'Interest?shareid=' + id,
+                success: function (stocks) {
+                    console.log("success init interested shares");
+                    setTable();
+                },
+                error: function () { console.log("problem in deleting the interested share"); }
+            });
+    }
+    function test(id) {
+        console.log(typeof(id));
+        console.log(headers);
+    }
+</script>
+}

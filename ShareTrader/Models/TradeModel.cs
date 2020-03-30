@@ -23,8 +23,9 @@ namespace ShareTrader.Models
         public double Price { get; set; }
 
         public int Amount { get; set; }
-    }
 
+    }
+    
     public class TraderContext : DbContext
     {
         public DbSet<TradeModel> Trades { get; set; }

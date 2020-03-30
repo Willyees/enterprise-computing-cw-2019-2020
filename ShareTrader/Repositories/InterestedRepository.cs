@@ -7,7 +7,7 @@ using ShareTrader.Models;
 
 namespace ShareTrader.Repositories
 {
-    public class InterestedRepository
+    public class InterestedRepository : IDisposable
     {
         private InterestedContext db = new InterestedContext();
         public bool Add(InterestedShareModel entity)
@@ -30,6 +30,44 @@ namespace ShareTrader.Repositories
         {
             ICollection<InterestedShareModel> list = db.InterestedShares.Where(c => (c.ShareId == interestInfo.ShareId && (interestInfo.ActualPrice > c.MaxPrice || interestInfo.ActualPrice < c.MinPrice))).ToList();
             return list;
+        }
+
+        public ICollection<InterestedShareModel> GetInfoInterestedShare(string userid)
+        {
+            ICollection<InterestedShareModel> list = db.InterestedShares.Where(c => (c.UserId == userid)).ToList();
+            return list;
+        }
+
+        
+        public bool Delete(int shareId, string userId)
+        {
+            var Shares = db.InterestedShares.Where(c => c.ShareId == shareId && c.UserId == userId).ToList();
+            if (Shares.Count > 0)
+            {
+                foreach(InterestedShareModel share in Shares)
+                    db.InterestedShares.Remove(share);
+                db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (db != null)
+                {
+                    db.Dispose();
+                    db = null;
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

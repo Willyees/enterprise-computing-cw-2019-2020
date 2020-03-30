@@ -626,6 +626,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\daterangepicker.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -651,12 +652,18 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="Scripts\daterangepicker.js" />
     <Content Include="Scripts\jquery.color-2.1.2.js" />
     <Content Include="Scripts\jquery.color-2.1.2.min.js" />
     <Content Include="Scripts\jquery.color.svg-names-2.1.2.js" />
     <Content Include="Scripts\jquery.color.svg-names-2.1.2.min.js" />
     <Content Include="Scripts\knockout-3.5.1.debug.js" />
     <Content Include="Scripts\knockout-3.5.1.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\sweetalert2.all.min.js" />
     <Content Include="Views\Acc\Login.cshtml" />
     <Content Include="Views\Acc\Index.cshtml" />
     <Content Include="Views\Acc\Register.cshtml" />
@@ -664,6 +671,8 @@
     <Content Include="Views\Info\Shares.cshtml" />
     <Content Include="Views\Info\Brokers.cshtml" />
     <Content Include="Views\Info\Announcements.cshtml" />
+    <Content Include="Views\Info\Trades.cshtml" />
+    <Content Include="Views\Info\InterestedShares.cshtml" />
     <None Include="Views\Test\Index2.cshtml" />
     <None Include="Views\Test\Index3.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
@@ -703,6 +712,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Interested\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

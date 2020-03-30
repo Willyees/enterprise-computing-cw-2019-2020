@@ -40,10 +40,23 @@ namespace ShareTrader.Controllers
             return "value";
         }
 
-        //todo: dont think it will work
-        public string Get(string symbol)
+
+        public IHttpActionResult Get(string symbol)
         {
-            return "asd";
+            int id = _service.GetIdBySymbol(symbol);
+            if (id == -1)
+                return BadRequest("internal problem mate");
+            return Ok(id);
+        }
+
+        [Route("api/Share/Infos")]
+        public IHttpActionResult PostInfos(ICollection<int> shareids)
+        {
+            //ICollection<_service.GetById(shareids);
+            ICollection<ShareModel> sharesinfo = _service.GetById(shareids);
+            if (shareids.Count == 0)
+                return BadRequest();
+            return Ok(sharesinfo);
         }
 
         [Route("api/Share/Info")]

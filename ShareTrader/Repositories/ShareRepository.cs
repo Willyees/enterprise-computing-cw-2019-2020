@@ -29,6 +29,25 @@ namespace ShareTrader.Repositories
             return Share;
         }
 
+        public ICollection<ShareModel> GetById(ICollection<int> shareids)
+        {
+            ICollection<ShareModel> shares = new List<ShareModel>();
+            foreach(int shareid in shareids) { 
+                shares.Add(db.Shares.Where(e => e.Id == shareid).FirstOrDefault());
+            }
+            return shares;
+        }
+
+        public int GetIdBySymbol(string symbol)
+        {
+            /*if (db.Shares.Count(c => symbol == c.Symbol) > 1) 
+            { 
+                System.Diagnostics.Debug.WriteLine("there shouldnt be more than 1 entity with same symbol");
+                return -1;
+            }*/
+            return db.Shares.First(c => symbol == c.Symbol).Id;
+        }
+
         public ICollection<ShareModel> GetByPrice(double price, bool higher)
         {
             if (higher)

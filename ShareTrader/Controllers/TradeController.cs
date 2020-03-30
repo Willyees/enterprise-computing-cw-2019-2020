@@ -37,7 +37,7 @@ namespace ShareTrader.Controllers
         }
 
         [Route("api/Trade/Info")]
-        public IHttpActionResult GetTradeInfo([FromBody] TradeQueryModel query)
+        public IHttpActionResult PostTradeInfo([FromBody] TradeQueryModel query)
         {
             if (!ModelState.IsValid)
             {

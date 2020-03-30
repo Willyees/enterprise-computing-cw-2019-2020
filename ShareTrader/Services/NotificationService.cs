@@ -91,9 +91,17 @@ namespace ShareTrader.Services
             throw new NotImplementedException();
         }
 
-        public InterestedShareModel GetById(int id)
+        //return the interested shareids for the provided userid
+        public ICollection<int> GetByUserId(string userid)
         {
-            throw new NotImplementedException();
+            ICollection<InterestedShareModel> list =  _repository.GetInfoInterestedShare(userid);
+            //only pass the shareids to the controller that will contact share api to retreive the collection of infoshares
+            ICollection<int> shareids = new List<int>();
+            foreach(InterestedShareModel share in list)
+            {
+                shareids.Add(share.ShareId);
+            }
+            return shareids;
         }
 
         public void Update(InterestedShareModel entity)
@@ -101,6 +109,14 @@ namespace ShareTrader.Services
             throw new NotImplementedException();
         }
 
-        
+        public bool Delete(int shareId, string userId)
+        {
+            return _repository.Delete(shareId, userId);
+        }
+
+        public InterestedShareModel GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

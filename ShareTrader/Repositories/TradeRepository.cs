@@ -26,12 +26,12 @@ namespace ShareTrader.Repositories
             return tradeModel;
         }
 
-        public ICollection<TradeModel> Get(TradeQueryModel q)
+            public ICollection<TradeModel> Get(TradeQueryModel q)
         {
             //check that each field was set from the user. If is null/empty/default value, then output true so it will not taken into account for the equality
             return db.Trades.Where(e =>(
-            (q.LowerBoundDate == default(DateTime) ? true : q.LowerBoundDate > e.DateTime) &&
-            (q.UpperBoundDate == default(DateTime) ? true : q.UpperBoundDate < e.DateTime) &&
+            (q.LowerBoundDate == default(DateTime) ? true : q.LowerBoundDate < e.DateTime) &&
+            (q.UpperBoundDate == default(DateTime) ? true : q.UpperBoundDate > e.DateTime) &&
             (String.IsNullOrEmpty(q.ShareSymbol) ? true : q.ShareSymbol == e.ShareId) && 
             (String.IsNullOrEmpty(q.SellerId) ? true : q.SellerId == e.SellerId) && 
             (String.IsNullOrEmpty(q.BuyerId) ? true : q.BuyerId == e.BuyerId))).ToList();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace ShareTrader.Controllers
         //POST api/Interest/ShareInterest
         [Authorize]
         [Route("api/Interest/ShareInterest")]
-        public async Task<IHttpActionResult> PostShareInterest([FromBody]InterestedShareModel entity)
+        public async Task<IHttpActionResult> PostShareInterest([FromBody]InterestedShareInModel entity)
         {
             try
             {
@@ -40,6 +41,7 @@ namespace ShareTrader.Controllers
 
                 if (Request.Headers.Contains("Authorization"))
                 {
+                    InterestedShareModel pref = new InterestedShareModel(entity);
                     //getting the user id from the User service and then passing it to be stored in the share interested table
                     string authorization = Request.Headers.Authorization.Parameter;
                     string scheme = Request.Headers.Authorization.Scheme;
@@ -58,16 +60,29 @@ namespace ShareTrader.Controllers
                             var definition = new { Id = "" };
                             var deserialized = JsonConvert.DeserializeAnonymousType(user_str, definition);
                             user = deserialized.Id;
-
-                            entity.UserId = user;
-                            _service.Add(entity);
+                            pref.UserId = user;
                         }
                     }
+                    using (var requestMessage =
+                    new HttpRequestMessage(HttpMethod.Get, "Share?symbol=" + entity.ShareSymbol))
+                    {
+                        requestMessage.Headers.Authorization =
+                            new AuthenticationHeaderValue(scheme, authorization);
+                        HttpResponseMessage response = await _client.SendAsync(requestMessage);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string id = await response.Content.ReadAsStringAsync();
+                            pref.ShareId = Convert.ToInt32(id);
+                        }
+                        //get shareid using the symbol
+
+                        _service.Add(pref);
+
+                    }
+
 
                 }
-
-
-                return Ok(user);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -103,6 +118,33 @@ namespace ShareTrader.Controllers
             return "value";
         }
 
+        [Authorize]
+        [Route("api/Interest/Shares")]
+        //get the interested shares from the logged user id
+        public async Task<ICollection<ShareModel>> GetShares()
+        {
+            
+            string userid = await RetreiveUserId();
+            ICollection<int> shareids = _service.GetByUserId(userid);
+            //call the service api to get info by ids
+            using (var requestMessage =
+                    new HttpRequestMessage(HttpMethod.Post, "Share/Infos"))
+            {
+                string json = JsonConvert.SerializeObject(shareids);
+                var content = new System.Net.Http.StringContent(json, Encoding.UTF8, "application/json");
+                requestMessage.Content = content;
+                var response = await _client.SendAsync(requestMessage);
+                if (response.IsSuccessStatusCode)
+                {
+                    ICollection<ShareModel> output = await response.Content.ReadAsAsync<ICollection<ShareModel>>();
+                    return output;
+                }
+                return new List<ShareModel>();
+                
+            }
+                
+        }
+
         // POST: api/Interest
         public void Post([FromBody]string value)
         {
@@ -113,9 +155,54 @@ namespace ShareTrader.Controllers
         {
         }
 
+        //deleting the interest by shareid and logged user id
         // DELETE: api/Interest/5
-        public void Delete(int id)
+        public async Task<IHttpActionResult> Delete(int shareid)
         {
+            string userid = await RetreiveUserId();
+            if (!_service.Delete(shareid, userid))
+                return BadRequest();
+            return Ok();
+        }
+
+        //have to check if the request obj is lost when passing to other fucntion
+        private async Task<string> RetreiveUserId()
+        {
+            try
+            {
+                string user = "";
+
+                if (Request.Headers.Contains("Authorization"))
+                {
+                    //getting the user id from the User service and then passing it to be stored in the share interested table
+                    string authorization = Request.Headers.Authorization.Parameter;
+                    string scheme = Request.Headers.Authorization.Scheme;
+                    using (var requestMessage =
+                    new HttpRequestMessage(HttpMethod.Get, "Account/UserInfo"))
+                    {
+                        requestMessage.Headers.Authorization =
+                            new AuthenticationHeaderValue(scheme, authorization);
+                        HttpResponseMessage response = await _client.SendAsync(requestMessage);
+
+                        //HttpResponseMessage response = await _client.GetAsync("");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string user_str = await response.Content.ReadAsStringAsync();
+                            var definition = new { Id = "" };
+                            var deserialized = JsonConvert.DeserializeAnonymousType(user_str, definition);
+                            user = deserialized.Id;
+                            return user;
+                        }
+                    }
+                }
+                return "";
+            }
+            catch (Exception e)
+            {
+                return "";
+            }
+
         }
     }
 }

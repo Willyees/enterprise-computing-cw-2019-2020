@@ -23,5 +23,15 @@ namespace ShareTrader.Models
         {
             return View();
         }
+
+        public ActionResult Trades()
+        {
+            return View();
+        }
+
+        public ActionResult InterestedShares()
+        {
+            return View();
+        }
     }
 }

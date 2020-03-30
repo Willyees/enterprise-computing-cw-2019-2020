@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/daterangepicker.css")
+
+
+    <title>Trades</title>
+</head>
+<body>
+    <h1>The complete list of the available trades</h1>
+
+    <div id="tradeTable">
+        <table class="table" border="1">
+            <thead style="background-color:silver">
+                <tr><th scope="col">Share Symbol</th><th scope="col">Date</th><th scope="col">Seller Id</th><th scope="col">Buyer Id</th><th scope="col">Price</th><th scope="col">Amount</th></tr>
+            </thead>
+            <tbody>
+                <tr class="loading"><td colspan="6">loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form>
+        <div class="form-group">
+            <div class="form-group">
+                <label for="daterange">Date Range</label>
+                <input type="text" class="form-control" id="daterange" placeholder="Date Range">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sharesymbol">Share Symbol</label>
+            <input type="text" class="form-control" id="sharesymbol" placeholder="Symbol">
+        </div>
+        <div class="form-group">
+            <label for="sellerid">Seller Id</label>
+            <input type="text" class="form-control" id="sellerid" placeholder="Id">
+        </div>
+        <div class="form-group">
+            <label for="buyerid">Buyer Id</label>
+            <input type="text" class="form-control" id="buyerid" placeholder="Id">
+        </div>
+
+    </form>
+    <button class="btn btn-primary" id="submit_btn">Submit</button>
+
+
+</body>
+</html>
+
+@section Scripts{
+    
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/daterangepicker.js"></script>
+    
+    <script>
+if (!String.prototype.supplant) {
+    String.prototype.supplant = function (o) {
+        return this.replace(/{([^{}]*)}/g,
+            function (a, b) {
+                var r = o[b];
+                return typeof r === 'string' || typeof r === 'number' ? r : a;
+            }
+        );
+    };
+}
+        var uri = "https://localhost:44309/api/";
+        $(function () {
+            
+            var tokenKey = 'accessToken';
+            var token = sessionStorage.getItem(tokenKey);
+            var headers = {};
+            if (token) {
+                headers.Authorization = 'Bearer ' + token;
+            }
+            var $tradeTable = $("#tradeTable");
+            var $tradeTableBody = $tradeTable.find("tbody");
+            var rowTemplate = '<tr data-symbol="{Id}"><td>{ShareId}</td><td>{DateTime}</td><td>{SellerId}</td><td>{BuyerId}</td><td>{Price}</td><td>{Amount}</td></tr>';
+
+            init();
+
+            $('input[id="daterange"]').daterangepicker({
+                opens: 'center',
+                startDate: moment().startOf('hour'),
+                endDate: moment().startOf('hour'),
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Clear'
+                },
+                error: function () { console.log("problem in retreiving the trades filtered"); }
+                
+            });
+            
+            $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
+                //just setting the dates to 1jan year 0. Later can check that the value is not this
+                
+                $('#daterange').data('daterangepicker').setStartDate('01-01-0000');
+                $('#daterange').data('daterangepicker').setEndDate('01-01-0000');
+                $('#daterange').val('');
+                console.log($('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD'));
+                //console.log($("#daterange").data('daterangepicker').startDate.format('YYYY-MM-DD'));
+            });
+                
+
+
+
+            /*$('#daterange').daterangepicker().on('apply.daterangepicker', function (e, picker) {
+                var startDate = picker.startDate.format('YYYY-MM-DD');
+                var endDate = picker.endDate.format('YYYY-MM-DD');
+            })*/
+
+
+
+            function init() {
+                console.log("init");
+                document.getElementById("submit_btn").onclick = onSubmit;
+                $.ajax({
+                    type: 'GET',
+                    url: uri + 'Trade',
+                    success: setTrades,
+                    error: function () { console.log("problem in retreiving the shares"); }
+                });
+            }
+
+            function setTrades(trades) {
+                console.log(trades);
+                        $tradeTableBody.empty();
+                        $.each(trades, function () {
+                            var trade = formatTrade(this);
+                            //console.log(this);
+                            $tradeTableBody.append(rowTemplate.supplant(trade));
+                        })
+            }
+
+            function formatTrade(trade) {
+                //console.log(trade.DateTime);
+                var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                var date = new Date(trade.DateTime).toLocaleDateString("en-UK", options);
+                //console.log(trade);
+                return $.extend(trade, {
+                    DateTime: date
+                });
+            }
+
+            //not nice, i m in a hurry
+        function onSubmit() {
+            var data = {};
+            var d = $("#daterange").data('daterangepicker').startDate.format('YYYY-MM-DD');
+            if(d != "0000-01-01")
+                $.extend(data, { LowerBoundDate: d });
+            d = $("#daterange").data('daterangepicker').endDate.format('YYYY-MM-DD');
+            if (d != "0000-01-01")
+                $.extend(data, { UpperBoundDate: d });
+            d = $("#sharesymbol").val()
+            if (d != "")
+                $.extend(data, { ShareSymbol: d });
+            d = $("#sellerid").val()
+            if (d != "")
+                $.extend(data, { SellerId: d });
+            d = $("#buyerid").val()
+            if (d != "")
+                $.extend(data, { BuyerId: d });
+
+            console.log(data);
+            $.ajax({
+                type: 'POST',
+                url: uri + 'Trade/Info',
+                contentType: 'application/json; charset=utf-8',
+                data : JSON.stringify(data),
+                success: setTrades
+            });  
+                };
+
+        })
+
+        
+
+    </script>
+}
