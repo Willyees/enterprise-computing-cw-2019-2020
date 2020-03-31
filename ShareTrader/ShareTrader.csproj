@@ -576,6 +576,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AnnouncementController.cs" />
     <Compile Include="Controllers\BrokerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterestController.cs" />
@@ -589,6 +590,7 @@
     <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AnnouncementModel.cs" />
     <Compile Include="Models\BrokerModel.cs" />
     <Compile Include="Models\BrokerViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -601,12 +603,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Providers\MyIdProvider.cs" />
+    <Compile Include="Repositories\AnnouncementRepository.cs" />
     <Compile Include="Repositories\BrokerRepository.cs" />
     <Compile Include="Repositories\InterestedRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\ShareRepository.cs" />
     <Compile Include="Repositories\TradeRepository.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
+    <Compile Include="Services\AnnouncementService.cs" />
     <Compile Include="Services\BrokerService.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\IWatcher.cs" />
@@ -673,6 +677,7 @@
     <Content Include="Views\Info\Announcements.cshtml" />
     <Content Include="Views\Info\Trades.cshtml" />
     <Content Include="Views\Info\InterestedShares.cshtml" />
+    <Content Include="Scripts\proxy-config.js" />
     <None Include="Views\Test\Index2.cshtml" />
     <None Include="Views\Test\Index3.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />

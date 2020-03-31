@@ -64,6 +64,11 @@ namespace ShareTrader.Services
             return new List<ShareModel>();
         }
 
+        public ShareModel GetByType(string type)
+        {
+            return _repository.GetByType(type);
+        }
+
         public void Add(ShareModel entity)
         {
             _repository.Add(entity);

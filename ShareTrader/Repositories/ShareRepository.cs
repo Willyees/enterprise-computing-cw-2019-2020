@@ -70,6 +70,11 @@ namespace ShareTrader.Repositories
             return sharesLower.ToList();
         }
 
+        public ShareModel GetByType(string type)
+        {
+            return db.Shares.Where(e => e.Type == type).FirstOrDefault();
+        }
+
         public void Add(ShareModel entity)
         {
             db.Shares.Add(entity);

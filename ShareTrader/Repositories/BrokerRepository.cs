@@ -57,12 +57,21 @@ namespace ShareTrader.Repositories
 
         internal ICollection<BrokerModel> GetByExpertise(string expertise)
         {
-            ICollection<BrokerModel> brokers = db.Brokers.Where(c => (c.Expertise == expertise )).ToList();
-            if (brokers.Count == 0)
+            //todo modify to use a join linq functionality
+            var brokers_exp = db.Expertises.Where(e => e.Expertise == expertise).ToList();
+            List<BrokerModel> brokers = new List<BrokerModel>();
+            foreach(var broker in brokers_exp)
             {
-                return null;
+                brokers.Add(GetById(broker.BrokerId));
             }
             return brokers;
+        }
+
+        //getall orderded by brokerid 
+        internal ICollection<ExpertiseBrokers> OrderByExpertise(ICollection<string> expertises)
+        {
+            var i_expertises = db.Expertises.OrderBy(e => e.BrokerId).ToList();
+            return i_expertises;
         }
 
         public void Add(BrokerModel entity)

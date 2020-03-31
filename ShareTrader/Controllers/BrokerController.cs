@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 using ShareTrader.Models;
@@ -13,13 +15,18 @@ namespace ShareTrader.Controllers
     public class BrokerController : ApiController
     {
 
-        BrokerService _service = new BrokerService();
-
-        /*public BrokerController(BrokerRepository repository)
+        BrokerService _service;
+        private HttpClient _client;
+        public BrokerController() : base()
         {
-            Console.WriteLine("Setting up broker controller with param");
-            _repository = repository;
-        }*/
+            System.Diagnostics.Debug.WriteLine("init Broker Controller");
+            _service = new BrokerService();
+            _client = new HttpClient();
+            _client.BaseAddress = new Uri("https://localhost:44309/api/");
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+        }
         //to use a generic repository, will have to set up Dipendency Injection 
 
 
@@ -48,6 +55,8 @@ namespace ShareTrader.Controllers
         {
             return _service.GetInfo(entity);
         }
+
+        [Authorize(Roles = "Admin")]
         // POST: api/Broker
         public IHttpActionResult Post([FromBody]BrokerModel broker)
         {
@@ -62,10 +71,44 @@ namespace ShareTrader.Controllers
             }
         }
 
+        [Authorize]
         [Route("api/Broker/Reccomend")]
-        public IEnumerable<BrokerModel> GetReccomend([FromBody]string Expertise)
+        public async Task<IEnumerable<BrokerScoreOutModel>> GetReccomend()
         {
-            return _service.ReccomendBroker(Expertise);
+            //get shares by using the user id
+            string user = "";
+
+            if (Request.Headers.Contains("Authorization"))
+            {
+                //getting the user id from the User service and then passing it to be stored in the share interested table
+                string authorization = Request.Headers.Authorization.Parameter;
+                string scheme = Request.Headers.Authorization.Scheme;
+                using (var requestMessage =
+                new HttpRequestMessage(HttpMethod.Get, "Interest/Shares"))
+                {
+                    requestMessage.Headers.Authorization =
+                        new AuthenticationHeaderValue(scheme, authorization);
+                    HttpResponseMessage response = await _client.SendAsync(requestMessage);
+
+                    //HttpResponseMessage response = await _client.GetAsync("");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        ICollection<ShareModel> shares_interested = await response.Content.ReadAsAsync<ICollection<ShareModel>>();
+                        //todof could use an automapper 
+                        List<string> expertises = new List<string>();
+                        //only pass the experrty type to the service
+                        foreach(var e in shares_interested)
+                        {
+                            expertises.Add(e.Type);
+                        }
+                        return _service.ReccomendBroker(expertises);
+                        
+                    }
+                }
+            }
+            return new List<BrokerScoreOutModel>();
+            //api/Interest/Shares
         }
 
         // PUT: api/Broker/5

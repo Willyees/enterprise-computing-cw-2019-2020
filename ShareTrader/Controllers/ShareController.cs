@@ -41,6 +41,7 @@ namespace ShareTrader.Controllers
         }
 
 
+        //get info by share symbol
         public IHttpActionResult Get(string symbol)
         {
             int id = _service.GetIdBySymbol(symbol);
@@ -49,6 +50,7 @@ namespace ShareTrader.Controllers
             return Ok(id);
         }
 
+        //get infos by share ids
         [Route("api/Share/Infos")]
         public IHttpActionResult PostInfos(ICollection<int> shareids)
         {
@@ -66,6 +68,8 @@ namespace ShareTrader.Controllers
             return shares;
         }
 
+
+        //add new share
         [Authorize(Roles = "Admin")]
         // POST api/<controller>
         public void Post([FromBody]ShareModel entity)

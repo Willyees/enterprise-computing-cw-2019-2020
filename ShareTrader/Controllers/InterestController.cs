@@ -37,32 +37,12 @@ namespace ShareTrader.Controllers
         {
             try
             {
+                string authorization = Request.Headers.Authorization.Parameter;
+                string scheme = Request.Headers.Authorization.Scheme;
                 string user = "";
-
-                if (Request.Headers.Contains("Authorization"))
-                {
-                    InterestedShareModel pref = new InterestedShareModel(entity);
-                    //getting the user id from the User service and then passing it to be stored in the share interested table
-                    string authorization = Request.Headers.Authorization.Parameter;
-                    string scheme = Request.Headers.Authorization.Scheme;
-                    using (var requestMessage =
-                    new HttpRequestMessage(HttpMethod.Get, "Account/UserInfo"))
-                    {
-                        requestMessage.Headers.Authorization =
-                            new AuthenticationHeaderValue(scheme, authorization);
-                        HttpResponseMessage response = await _client.SendAsync(requestMessage);
-
-                        //HttpResponseMessage response = await _client.GetAsync("");
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            string user_str = await response.Content.ReadAsStringAsync();
-                            var definition = new { Id = "" };
-                            var deserialized = JsonConvert.DeserializeAnonymousType(user_str, definition);
-                            user = deserialized.Id;
-                            pref.UserId = user;
-                        }
-                    }
+                InterestedShareModel pref = new InterestedShareModel(entity);
+                pref.UserId = await RetreiveUserId();
+                
                     using (var requestMessage =
                     new HttpRequestMessage(HttpMethod.Get, "Share?symbol=" + entity.ShareSymbol))
                     {
@@ -77,11 +57,7 @@ namespace ShareTrader.Controllers
                         //get shareid using the symbol
 
                         _service.Add(pref);
-
                     }
-
-
-                }
                 return Ok();
             }
             catch (Exception e)
@@ -97,6 +73,14 @@ namespace ShareTrader.Controllers
         public void PostShareNotification([FromBody] ShareModel shareModified)
         {
             _service.NotifyShareChanges(shareModified);
+        }
+
+        //POST 
+        [Route("api/Interest/AnnouncementNotification")]
+        public void PostAnnouncementNotification([FromBody] AnnouncementModel announcement)
+        {
+            System.Diagnostics.Debug.WriteLine("AnnouncementNotification");
+            _service.NotifyAnnouncements(announcement);
         }
 
         [Route("api/Interest/BrokerNotification")]

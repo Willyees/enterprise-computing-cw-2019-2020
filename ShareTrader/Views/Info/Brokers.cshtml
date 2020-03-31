@@ -4,15 +4,28 @@
     <title>Complete brokers view</title>
 </head>
 <body>
+    <h2>Get broker recommendation based on your chosen shares types!</h2>
+    <button id="btn_reccomend" type="button" class="btn btn-info" style="margin-bottom : 5px">Reccomend me!</button>
+    <div  id="reccomendedBrokers">
+        <table class="table table-bordered">
+            <thead style="background-color:silver">
+                <tr><th scope="col">Score</th><th scope="col">First Name</th><th scope="col">Surname</th><th scope="col">Email</th><th scope="col">Phone Number</th><th scope="col">Quality Grade</th></tr>
+            </thead>
+            <tbody>
+                <tr></tr>
+            </tbody>
+        </table>
+    </div>
+    <br/>
     <h1>The complete list of the available brokers</h1>
 
     <div id="brokerTable">
         <table class="table" border="1">
             <thead style="background-color:silver">
-                <tr><th scope="col">First Name</th><th scope="col">Surname</th><th scope="col">Email</th><th scope="col">Phone Number</th><th scope="col">Expertise</th></tr>
-            </thead>
+                <tr><th scope="col">First Name</th><th scope="col">Surname</th><th scope="col">Email</th><th scope="col">Phone Number</th><th scope="col">Quality Grade</th></tr>
+</thead>
             <tbody>
-                <tr class="loading"><td colspan="5">loading...</td></tr>
+                <tr class="loading"><td colspan="6">loading...</td></tr>
             </tbody>
         </table>
     </div>
@@ -36,6 +49,11 @@ if (!String.prototype.supplant) {
     };
 }
 
+//setup info to connect to controllers
+var headers = {};
+var uri = "https://localhost:44309/api/";
+
+
 jQuery.fn.flash = function(n, t) {
     var i = this.css("backgroundColor");
     this.animate({
@@ -46,17 +64,23 @@ jQuery.fn.flash = function(n, t) {
 };
 
 $(function () {
-    var uri = "https://localhost:44309/api/"
+    var token = sessionStorage.getItem("accessToken");
+    if (token) {
+        headers.Authorization = 'Bearer ' + token;
+    }
     var proxy = $.connection.notificationHub; // the generated client-side hub proxy
     var $brokerTable = $('#brokerTable');
     var $brokerTableBody = $brokerTable.find('tbody');
-    var rowTemplate = '<tr data-symbol="{Id}"><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{Expertise}</td></tr>';
+    var rowTemplate = '<tr data-symbol="{Id}"><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{QualityGrade}</td></tr>';
 
-
+    var rowTemplateScore = '<tr data-symbol="{Id}"><td>{Score}</td><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{QualityGrade}</td></tr>'
+    var $brokerTableScore = $('#reccomendedBrokers');
+    var $brokerTableScoreBody = $brokerTableScore.find('tbody');
 
     function init() {
         //set all the current stocks
         console.log("init");
+        document.getElementById("btn_reccomend").onclick = getBrokerReccomendation;
         $.ajax({
             type: 'GET',
             url: uri + 'Broker',
@@ -66,7 +90,7 @@ $(function () {
                     $brokerTableBody.append(rowTemplate.supplant(this));
                 })
             },
-            error: function () { console.log("problem in retreiving the shares");}
+            error: function () { console.log("problem in retreiving the brokers");}
         });
 
 
@@ -84,7 +108,28 @@ $(function () {
 
     // Start the connection
     $.connection.hub.start().then(init);
+
+            function getBrokerReccomendation() {
+            
+            $.ajax({
+            type: 'GET',
+            headers : headers,
+            url: uri + 'Broker/Reccomend',
+                success: function (brokers) {
+                    console.log(brokers);
+                    $brokerTableScore.attr("hidden", false);
+                    $brokerTableScoreBody.empty();
+                    
+                    $.each(brokers, function () {
+                        $brokerTableScoreBody.append(rowTemplateScore.supplant(this));
+                })
+            },
+            error: function () { console.log("problem in retreiving the brokers");}
+        });
+        }
+
 });
+        
         </script>
     }
 </body>

@@ -25,7 +25,14 @@ namespace ShareTrader.Repositories
             
         }
 
-        //returning list of shareinterstes where the actual price is either less than the minimum or higher than the maximum
+        //returning list of shareinterests by share id
+        public ICollection<InterestedShareModel> GetInfoInterestedShare(int shareid)
+        {
+            ICollection<InterestedShareModel> list = db.InterestedShares.Where(c => c.ShareId == shareid).ToList();
+            return list;
+        }
+
+        //returning list of shareinterstes taking into account the current price of share
         public ICollection<InterestedShareModel> GetInfoInterestedShare(InterestedShareQuery interestInfo)
         {
             ICollection<InterestedShareModel> list = db.InterestedShares.Where(c => (c.ShareId == interestInfo.ShareId && (interestInfo.ActualPrice > c.MaxPrice || interestInfo.ActualPrice < c.MinPrice))).ToList();

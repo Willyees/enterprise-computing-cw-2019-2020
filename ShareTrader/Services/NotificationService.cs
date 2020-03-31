@@ -62,14 +62,20 @@ namespace ShareTrader.Services
             ICollection<InterestedShareModel> usersToNotify = _repository.GetInfoInterestedShare(shareQuery);
             foreach(InterestedShareModel shareModel in usersToNotify)
             {
-                Clients.User(shareModel.UserId).receiveStockMessage("the share you are interested " + shareModel.ShareId + " has moved price");
+                Clients.User(shareModel.UserId).receiveStockMessage("the share you are interested " + shareModel.ShareId + " has moved price into your interest");
             }
             UpdateShares(outViewShare);
         }
 
-        public void NotifyAnnouncements()
+        public void NotifyAnnouncements(AnnouncementModel announcement)
         {
-            throw new NotImplementedException();
+            //get user interested to the share related to the new announcement
+            ICollection<InterestedShareModel> interests = _repository.GetInfoInterestedShare(announcement.ShareId);
+            foreach(InterestedShareModel interest in interests)
+            {
+                Clients.User(interest.UserId).receiveAnnouncement("a new announcement related to an interested share has been published!");
+            }
+            //push change to all the clients screen in real time
         }
 
         //functions to update single entity on client side
@@ -83,6 +89,11 @@ namespace ShareTrader.Services
         {
             //try to update the table to all the users in real time
             Clients.All.updateStockPrice(outViewShare);
+        }
+
+        public void UpdateAnnouncements(AnnouncementModel announcement)
+        {
+            Clients.All.updateAnnouncement(announcement);
         }
      
 

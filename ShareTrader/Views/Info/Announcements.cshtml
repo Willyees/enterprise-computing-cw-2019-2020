@@ -1,9 +1,4 @@
-﻿
-@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html>
 <head>
@@ -15,3 +10,26 @@
     </div>
 </body>
 </html>
+
+@section scripts{
+    
+<script src="/Scripts/jquery.signalR-2.4.1.js"></script>
+<script src="/signalr/hubs"></script>
+<script src="~/Scripts/jquery.color-2.1.2.js"></script>
+<script src="~/Scripts/proxy-config.js"></script>
+<script>
+    $(function () {
+
+        function init() {
+            console.log(proxy.server.info());
+
+        }
+        $.connection.hub.start().then(init);
+
+    });
+    //create proxy
+    
+
+    }
+</script>
+}

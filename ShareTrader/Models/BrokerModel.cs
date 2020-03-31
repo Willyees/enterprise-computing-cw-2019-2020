@@ -32,34 +32,72 @@ namespace ShareTrader.Models
         [MaxLength(256)]
         public string PhoneNumber { get; set; }
 
-        [MaxLength(256)]
-        public string Expertise { get; set; }
 
         public double QualityGrade { get; set; }
 
-        public BrokerModel() : this(0, "","","","", "", 0.0)
+        public BrokerModel() : this(0, "","","","", 0.0)
         {
 
         }
 
-        public BrokerModel(int id, string firstName, string lastName, string email, string phoneNumber, string expertise, double qualityGrade)
+        public BrokerModel(int id, string firstName, string lastName, string email, string phoneNumber, double qualityGrade)
         {
             Id = id;
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             PhoneNumber = phoneNumber;
-            Expertise = expertise;
             QualityGrade = qualityGrade;
         }
     }
 
-    
+    public class ExpertiseBrokers
+    {
+        //shoudl remove this and use pk brokerid && expertise together
+        public int Id { get; set; }
+        public int BrokerId { get; set; }
+        public string Expertise { get; set; }
+    }
 
+    public class BrokerScoreOutModel
+    {
+        public int Id { get; set; }
+
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+
+        public string Email { get; set; }
+
+
+        public string PhoneNumber { get; set; }
+
+
+        public double QualityGrade { get; set; }
+        public double Score { get; set; }
+
+        public BrokerScoreOutModel()
+        {
+
+        }
+
+        public BrokerScoreOutModel(BrokerModel model)
+        {
+            Id = model.Id;
+            FirstName = model.FirstName;
+            LastName = model.LastName;
+            Email = model.Email;
+            PhoneNumber = model.PhoneNumber;
+            QualityGrade = model.QualityGrade;
+        }
+    }
 
     public class BrokerContext : DbContext
     {
         public DbSet<BrokerModel> Brokers { get; set; }
+        public DbSet<ExpertiseBrokers> Expertises { get; set; }
 
         public BrokerContext() : base("name=DefaultConnection")
         {
