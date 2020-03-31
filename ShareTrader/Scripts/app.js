@@ -34,6 +34,7 @@
             }
             if (response.error) self.errors.push(response.error);
             if (response.error_description) self.errors.push(response.error_description);
+            Swal.fire("Error", response.error_description, "error");
         }
     }
 
@@ -73,6 +74,7 @@
             data: JSON.stringify(data)
         }).done(function (data) {
             self.result("Done!");
+            Swal.fire("Registered", "successfully registerd", "success");
         }).fail(showError);
     }
 
@@ -94,6 +96,7 @@
             self.user(data.userName);
             // Cache the access token in session storage.
             sessionStorage.setItem(tokenKey, data.access_token);
+            Swal.fire("Successfully logged in!","logged in","success");
         }).fail(showError);
     }
 
@@ -113,6 +116,7 @@
             // Successfully logged out. Delete the token.
             self.user('');
             sessionStorage.removeItem(tokenKey);
+            Swal.fire("Successfully logged out!", "logged out", "success");
         }).fail(showError);
     }
 }

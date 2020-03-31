@@ -1,10 +1,11 @@
-﻿@section Scripts {
-    @Scripts.Render("~/bundles/app")
-    <script src="/Scripts/jquery-3.4.1.min.js"></script>
+﻿@section scripts {
+    <script src="~/Scripts/knockout-3.5.1.js"></script>
+    <script src="~/Scripts/app.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 }
     
 <div class="row">
-    <div class="col-sm-4">
+    <!--<div class="col-sm-4">
         <form data-bind="submit: callApi">
             <h3>Invoke API</h3>
             <div class="form-group">
@@ -22,7 +23,7 @@
                 <p data-bind="text: $data" />
             </div>
         </form>
-    </div>
+    </div>-->
 
     <div class="col-sm-4">
         <form data-bind="submit: register">
