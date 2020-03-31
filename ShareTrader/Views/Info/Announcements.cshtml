@@ -6,7 +6,17 @@
     <title>Announcements</title>
 </head>
 <body>
-    <div> 
+    <h1>The complete list of the available announcements</h1>
+
+    <div id="annTable">
+        <table class="table" border="1">
+            <thead style="background-color:silver">
+                <tr><th scope="col">Share</th><th scope="col">Announcement</th><th scope="col">Type</th></tr>
+            </thead>
+            <tbody>
+                <tr class="loading"><td colspan="3">loading...</td></tr>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
@@ -19,17 +29,36 @@
 <script src="~/Scripts/proxy-config.js"></script>
 <script>
     $(function () {
-
+        var uri = "https://localhost:44309/api/"
+        var $annTable = $('#annTable');
+        var $annTableBody = $annTable.find('tbody');
+        var rowTemplate = '<tr data-symbol="{Id}"><td>{ShareId}</td><td>{Announcement}</td><td>{Type}</td></tr>';
         function init() {
-            console.log(proxy.server.info());
-
+            console.log("init");
+            $.ajax({
+                type: 'GET',
+                url: uri + 'Announcement',
+                success: function (ann) {
+                    $annTableBody.empty();
+                    $.each(ann, function () {
+                        $annTableBody.append(rowTemplate.supplant(this));
+                    })
+                },
+                error: function () { console.log("problem in retreiving the announcements"); }
+            });
         }
         $.connection.hub.start().then(init);
 
-    });
-    //create proxy
-    
+        $.extend(proxy.client, {
+            updateAnnouncement: function (announcement) {
+                console.log("updating announcement");
+                $row = $(rowTemplate.supplant(announcement)),
+                    $annTableBody.find('tr[data-symbol=' + announcement.Id + ']').replaceWith($row);
+                $row.flash("255,255,0", 3e3);
+            }
+        });
 
-    }
+    })
+    
 </script>
 }

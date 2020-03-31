@@ -1,3 +1,11 @@
+jQuery.fn.flash = function (n, t) {
+    var i = this.css("backgroundColor");
+    this.animate({
+        backgroundColor: "rgb(" + n + ")"
+    }, t / 2).animate({
+        backgroundColor: i
+    }, t / 2)
+};
 // Crockford's supplant method
 if (!String.prototype.supplant) {
     String.prototype.supplant = function (o) {
@@ -15,4 +23,8 @@ if (token) {
     headers.Authorization = 'Bearer ' + token;
 }
 var proxy = $.connection.notificationHub; // the generated client-side hub proxy
-proxy.client.updateAnnouncement = function (announcement) { alert(announcement) };
+
+//fucntions to notify user of change (alerts, no changements to specific tables) - always available
+proxy.client.receiveAnnouncement = function (announcement) {Swal.fire("New Announcement", announcement) };
+
+proxy.client.receiveStockMessage = function (stockmessage) { Swal.fire("Share interested", stockmessage) };

@@ -24,7 +24,8 @@ namespace ShareTrader
                       "~/Content/site.css"));
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
           "~/Scripts/knockout-{version}.js",
-          "~/Scripts/app.js"));
+          "~/Scripts/app.js",
+          "~/Scripts/sweetalert2.all.min.js"));
         }
     }
 }

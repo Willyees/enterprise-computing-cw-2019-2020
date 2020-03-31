@@ -15,6 +15,15 @@ namespace ShareTrader.Models
         public int ShareId { get; set; }
     }
 
+    public class AnnouncementOutModel
+    {
+        public int Id { get; set; }
+        public string Announcement { get; set; }
+        public string Type { get; set; }
+        //public string ShareHolderId { get; set; }
+        public string ShareSymbol { get; set; }
+    }
+
     public class AnnouncementContext : DbContext
     {
         public DbSet<AnnouncementModel> Announcements { get; set; }

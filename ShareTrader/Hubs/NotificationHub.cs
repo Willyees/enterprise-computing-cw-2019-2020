@@ -36,9 +36,10 @@ namespace ShareTrader.Hubs
             //System.Diagnostics.Debug.WriteLine(Context.ConnectionId);
             //Clients.User("a@a.com").send("receiveStockMessage", "WHASYT");
             //Clients.User("e@e.com").receiveStockMessage("WHASYT");
-            
+
             //_service.NotifyShareChanges(5);
             //Clients.Caller.receiveStockMessage("Asad");
+            System.Diagnostics.Debug.WriteLine(Context.User.Identity.Name);
             System.Diagnostics.Debug.WriteLine("end");
         }
 

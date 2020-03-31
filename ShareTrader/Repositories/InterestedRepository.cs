@@ -29,6 +29,7 @@ namespace ShareTrader.Repositories
         public ICollection<InterestedShareModel> GetInfoInterestedShare(int shareid)
         {
             ICollection<InterestedShareModel> list = db.InterestedShares.Where(c => c.ShareId == shareid).ToList();
+            db.SaveChanges();
             return list;
         }
 
@@ -36,6 +37,7 @@ namespace ShareTrader.Repositories
         public ICollection<InterestedShareModel> GetInfoInterestedShare(InterestedShareQuery interestInfo)
         {
             ICollection<InterestedShareModel> list = db.InterestedShares.Where(c => (c.ShareId == interestInfo.ShareId && (interestInfo.ActualPrice > c.MaxPrice || interestInfo.ActualPrice < c.MinPrice))).ToList();
+            db.SaveChanges();
             return list;
         }
 

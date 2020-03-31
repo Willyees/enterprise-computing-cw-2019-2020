@@ -22,47 +22,47 @@
 </html>
 
 @section scripts{
-    
-<script>
-    // Crockford's supplant method
-            if (!String.prototype.supplant) {
-                String.prototype.supplant = function (o) {
-                    return this.replace(/{([^{}]*)}/g,
-                        function (a, b) {
-                            var r = o[b];
-                            return typeof r === 'string' || typeof r === 'number' ? r : a;
-                        }
-                    );
-                };
-    }
-    var headers = {};
-    var uri = "https://localhost:44309/api/"
-    $(function () {
-        
-        //var proxy = $.connection.notificationHub; // the generated client-side hub proxy
-        var $stockTable = $('#stockTable');
-        var $stockTableBody = $stockTable.find('tbody');
-        var rowTemplate = '<tr data-symbol="{Id}"><td>{Symbol}</td><td>{Name}</td><td>{Price}</td><td>{Volume}</td><td>{High}</td><td>{Low}</td><td>{Currency}</td><td>{Type}</td><td>{Button}</td></tr>';
-        var btnTemplate = '<button type="button" class="btn btn-danger" onclick="removeInterest({Id})" id="btn_{Id}"><span class="glyphicon glyphicon-remove"></span></button>';
-        
+    <script src="/Scripts/jquery.signalR-2.4.1.js"></script>
+
+    <script src="/signalr/hubs"></script>
+    <script src="~/Scripts/jquery.color-2.1.2.js"></script>
+    <script src="~/Scripts/proxy-config.js"></script>
+    <script>
+
+        var uri = "https://localhost:44309/api/"
+        var $stockTable;
+            var $stockTableBody;
+            var rowTemplate = '<tr data-symbol="{Id}"><td>{Symbol}</td><td>{Name}</td><td>{Price}</td><td>{Volume}</td><td>{High}</td><td>{Low}</td><td>{Currency}</td><td>{Type}</td><td>{Button}</td></tr>';
+            var btnTemplate = '<button type="button" class="btn btn-danger" onclick="removeInterest({Id})" id="btn_{Id}"><span class="glyphicon glyphicon-remove"></span></button>';
+        $(function () {
+
+            //var proxy = $.connection.notificationHub; // the generated client-side hub proxy
+            $stockTable = $('#stockTable');
+            $stockTableBody = $stockTable.find('tbody');
+            //rowTemplate = '<tr data-symbol="{Id}"><td>{Symbol}</td><td>{Name}</td><td>{Price}</td><td>{Volume}</td><td>{High}</td><td>{Low}</td><td>{Currency}</td><td>{Type}</td><td>{Button}</td></tr>';
+            //btnTemplate = '<button type="button" class="btn btn-danger" onclick="removeInterest({Id})" id="btn_{Id}"><span class="glyphicon glyphicon-remove"></span></button>';
+
+
+            
+            function init() {
+                //document.getElementById('b').onclick = test;
+                setTable(headers);
+
+            }
+
+
+
+
+            function test(i) {
+                console.log(i);
+            }
+        $.connection.hub.start().then(init);
+        })
+
         function formatStock(stock) {
             return $.extend(stock, {
                 Price: stock.Price.toFixed(2)
             });
-        }
-
-        init();
-
-        function init() {
-            //have to pass the authorization
-            var token = sessionStorage.getItem("accessToken");
-            
-            if (token) {
-                headers.Authorization = 'Bearer ' + token;
-            }
-            //document.getElementById('b').onclick = test;
-            setTable(headers);
-            
         }
 
         function setTable() {
@@ -86,13 +86,7 @@
                 error: function () { console.log("problem in retreiving the shares"); }
             });
         }
-
-        
-        function test(i) {
-            console.log(i);
-        }
-    })
-    function removeInterest(id) {
+        function removeInterest(id) {
             $.ajax({
                 type: 'DELETE',
                 headers: headers,
@@ -103,10 +97,10 @@
                 },
                 error: function () { console.log("problem in deleting the interested share"); }
             });
-    }
-    function test(id) {
-        console.log(typeof(id));
-        console.log(headers);
-    }
-</script>
+        }
+        function test(id) {
+            console.log(typeof (id));
+            console.log(headers);
+        }
+    </script>
 }

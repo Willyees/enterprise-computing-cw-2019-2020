@@ -76,6 +76,7 @@ namespace ShareTrader.Services
                 Clients.User(interest.UserId).receiveAnnouncement("a new announcement related to an interested share has been published!");
             }
             //push change to all the clients screen in real time
+            UpdateAnnouncements(announcement);
         }
 
         //functions to update single entity on client side

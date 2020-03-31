@@ -6,7 +6,7 @@
 <body>
     <h2>Get broker recommendation based on your chosen shares types!</h2>
     <button id="btn_reccomend" type="button" class="btn btn-info" style="margin-bottom : 5px">Reccomend me!</button>
-    <div  id="reccomendedBrokers">
+    <div hidden id="reccomendedBrokers">
         <table class="table table-bordered">
             <thead style="background-color:silver">
                 <tr><th scope="col">Score</th><th scope="col">First Name</th><th scope="col">Surname</th><th scope="col">Email</th><th scope="col">Phone Number</th><th scope="col">Quality Grade</th></tr>
@@ -35,6 +35,7 @@
 
         <script src="/signalr/hubs"></script>
         <script src="~/Scripts/jquery.color-2.1.2.js"></script>
+        <script src="~/Scripts/proxy-config.js"></script>
 
         <script>
             // Crockford's supplant method
@@ -50,7 +51,6 @@ if (!String.prototype.supplant) {
 }
 
 //setup info to connect to controllers
-var headers = {};
 var uri = "https://localhost:44309/api/";
 
 
@@ -64,11 +64,7 @@ jQuery.fn.flash = function(n, t) {
 };
 
 $(function () {
-    var token = sessionStorage.getItem("accessToken");
-    if (token) {
-        headers.Authorization = 'Bearer ' + token;
-    }
-    var proxy = $.connection.notificationHub; // the generated client-side hub proxy
+
     var $brokerTable = $('#brokerTable');
     var $brokerTableBody = $brokerTable.find('tbody');
     var rowTemplate = '<tr data-symbol="{Id}"><td>{FirstName}</td><td>{LastName}</td><td>{Email}</td><td>{PhoneNumber}</td><td>{QualityGrade}</td></tr>';
@@ -96,16 +92,14 @@ $(function () {
 
     }
 
-
     // Add client-side hub methods that the server will call
-    $.extend(proxy.client, {
-        updateBrokers: function (broker) {
-            $row = $(rowTemplate.supplant(broker)),
+$.extend(proxy.client, {
+    updateBrokers: function (broker) {
+        $row = $(rowTemplate.supplant(broker)),
             $brokerTableBody.find('tr[data-symbol=' + broker.Id + ']').replaceWith($row);
-            $row.flash("255,255,0", 3e3);
-        }
-    });
-
+        $row.flash("255,255,0", 3e3);
+    }
+});
     // Start the connection
     $.connection.hub.start().then(init);
 
