@@ -34,7 +34,8 @@
             }
             if (response.error) self.errors.push(response.error);
             if (response.error_description) self.errors.push(response.error_description);
-            Swal.fire("Error", response.error_description, "error");
+            Swal.fire("Error " + response.Message, Object.values(response.ModelState)[0][0], "error");
+            //JSON.stringify(response.ModelState, (k, v) => { return v })
         }
     }
 
@@ -75,6 +76,7 @@
         }).done(function (data) {
             self.result("Done!");
             Swal.fire("Registered", "successfully registerd", "success");
+            window.location.href = "/Info/Shares"
         }).fail(showError);
     }
 
@@ -96,7 +98,9 @@
             self.user(data.userName);
             // Cache the access token in session storage.
             sessionStorage.setItem(tokenKey, data.access_token);
-            Swal.fire("Successfully logged in!","logged in","success");
+            window.location.href = "/Info/Shares"
+            Swal.fire("Successfully logged in!", "logged in", "success");
+            
         }).fail(showError);
     }
 

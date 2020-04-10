@@ -16,6 +16,12 @@ namespace ShareTrader.Controllers
             return new string[] { "Ok login" };
         }
 
+        [Route("api/Values/Admin")]
+        [Authorize(Roles = "Admin")]
+        public string GetAdmin()
+        {
+            return "you are an admin";
+        }
         // GET api/values/5
         public string Get(int id)
         {

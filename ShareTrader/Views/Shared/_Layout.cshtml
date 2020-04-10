@@ -25,7 +25,7 @@
                     <li><a href="~/Info/Trades">Trades</a></li>
                     <li><a href="~/Info/Announcements">Announcements</a></li>
                     <li><a href="~/Info/InterestedShares">Interested-Shares</a></li>
-                    <li><a href="~/Acc/complete">Register&Login</a></li>
+                    <li><a href="~/Acc/LoginRegister">Register&Login</a></li>
                     <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
                 </ul>
             </div>
@@ -35,7 +35,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Share Watch Trader Application</p>
         </footer>
     </div>
     @Scripts.Render("~/bundles/jquery")

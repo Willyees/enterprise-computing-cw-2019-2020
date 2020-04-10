@@ -25,7 +25,7 @@ namespace ShareTrader.Controllers
             return View();
         }
 
-        public ActionResult complete()
+        public ActionResult LoginRegister()
         {
             ViewBag.Title = "Home Page";
 

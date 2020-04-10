@@ -111,6 +111,7 @@ namespace ShareTrader.Controllers
             //api/Interest/Shares
         }
 
+        [Authorize]
         // PUT: api/Broker/5
         public void Put(int id, [FromBody]string value)
         {
