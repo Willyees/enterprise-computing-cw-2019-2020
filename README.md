@@ -6,7 +6,7 @@ The main aim is towards the reuse of code, so techniques should be used to guara
 scout other projects/libraries for premade application parts. Thoughts need to be given on the possible incompatibilities between found components.
 
 The final product will not be an active trading platform but rather a tracker, gathering information and notify users when conditions are met
-A more in depth discussion of the coursework can be found in the [report](google.com)
+A more in depth discussion of the coursework can be found in the [report](https://github.com/Willyees/enterprise-computing-cw-2019-2020/blob/master/report.pdf)
 
 # Build
 The application has been built as a web app taking advantage of ASP .NET. MSOA was attempted in order to decoupling the application and create a
